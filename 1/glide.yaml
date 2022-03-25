@@ -1,5 +1,0 @@
-package: github.com/leominov/prometheus-network-check
-import:
-- package: github.com/prometheus/client_golang
-  subpackages:
-  - prometheus/promhttp
