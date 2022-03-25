@@ -1,1 +1,4 @@
-FROM
+FROM busybox
+RUN yum install -y nginx
+RUN go build -o prometheus-network-check
+EXPOSE 8010
