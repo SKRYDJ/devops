@@ -1,0 +1,53 @@
+replicaCount: 1
+
+image:
+  repository: mpddev-nexus.moex.com/mpd-docker/go-kafka-partitions-exporter
+  tag: latest
+  pullPolicy: IfNotPresent
+  ports:
+    - name: http
+      containerPort: 7979
+      protocol: TCP
+
+annotations:
+  prometheus.io/port: '7079'
+  prometheus.io/scrape: 'true'
+  prometheus.io/path: '/metrics'
+  metrics.dynatrace.com/scrape: 'true'
+  metrics.dynatrace.com/path: '/metrics'
+  metrics.dynatrace.com/port: '7079'
+
+nameOverride: "go-kafka-partitions-exporter"
+fullnameOverride: "go-kafka-partitions-exporter"
+
+service:
+  type: NodePort
+  port: 7979
+  ports:
+    - name: http
+      port: 7979
+      targetPort: 7979
+      protocol: TCP
+
+ingress:
+  enabled: true
+  hosts:
+    - mpddev.moex.com
+  path: /
+  tls: []
+
+resources:
+  limits:
+   memory: 200Mi
+  requests:
+   memory: 200Mi
+
+env:
+- name: TZ
+  value: "Europe/Moscow"
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
