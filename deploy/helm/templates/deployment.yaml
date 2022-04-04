@@ -1,16 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "prometheus-network-check.fullname" . }}
+  name: {{ include "application-template.fullname" . }}
+  labels:
+{{ include "application-template.labels" . | indent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "prometheus-network-check.name" . }}
+      app.kubernetes.io/name: {{ include "application-template.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "prometheus-network-check.name" . }}
+        app.kubernetes.io/name: {{ include "application-template.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
       annotations:
 {{- if .Values.annotations }}
 {{ toYaml .Values.annotations | indent 8 }}
@@ -24,8 +28,14 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports: 
-{{ toYaml .Values.image.port | indent 12 }}
+#          env:
+#            - name: KAFKA_BROKERS
+#              value: #"10.73.31.11:9092,10.73.31.12:9092,10.73.31.12:9092,10.72.31.11:9092,10.72.31.11:9092,10.72.31.11:9092"
+#          command:
+#          - /go-kafka-partitions-exporter
+#          - --kafka-#brokers="10.73.31.11:9092,10.73.31.12:9092,10.73.31.12:9092,10.72.31.11:9092,10.72.31.11:9092,10.72.31.11:9092"   
+          ports:
+{{ toYaml .Values.image.ports | indent 12 }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
 {{- with .Values.nodeSelector }}

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "application-template.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "application-template.name" . }}
+    helm.sh/chart: {{ include "application-template.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+{{ toYaml .Values.service.ports | trim | indent 4 }}
+  selector:
+    app.kubernetes.io/name: {{ include "application-template.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  sessionAffinity: ClientIP
